@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -68,6 +69,15 @@ public class IndexController {
             @RequestParam("keywords") String keywords,
             @RequestParam(required = false, defaultValue = "1") Integer pageIndex,
             @RequestParam(required = false, defaultValue = "10") Integer pageSize, Model model) {
+        //先将参数keywords转换为utf8格式，防止乱码
+        try {
+            //因为Tomcat对于前端的请求只会用ISO-8859-1来进行编码
+            //那么我们用字符集ISO-8859-1将字符串解码为 byte 序列，得到一个byte数组
+            //然后利用String类的构造函数，用字符集utf8再对byte数组进行编码，因此就得到了utf8的字符串keywords
+            byte[] arr = keywords.getBytes("ISO-8859-1");
+            keywords = new String(arr,"utf8");        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         //文章列表
         HashMap<String, Object> criteria = new HashMap<>(2);
         criteria.put("status", ArticleStatus.PUBLISH.getValue());
