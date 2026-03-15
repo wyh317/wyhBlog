@@ -1,7 +1,7 @@
 package com.wyh.ssm.blog.controller.admin;
 
 import cn.hutool.http.HtmlUtil;
-import com.github.pagehelper.PageInfo;
+import com.wyh.ssm.blog.dto.response.PageResult;
 import com.wyh.ssm.blog.dto.ArticleParam;
 import com.wyh.ssm.blog.entity.Article;
 import com.wyh.ssm.blog.service.ArticleService;
@@ -55,7 +55,7 @@ public class BackArticleController {
             criteria.put("status", status);
             model.addAttribute("pageUrlPrefix", "/admin/article?status=" + status + "&pageIndex");
         }
-        PageInfo<Article> articlePageInfo = articleService.pageArticle(pageIndex, pageSize, criteria);
+        PageResult<Article> articlePageInfo = articleService.pageArticle(pageIndex, pageSize, criteria);
         model.addAttribute("pageInfo", articlePageInfo);
         return "Admin/Article/index";
     }

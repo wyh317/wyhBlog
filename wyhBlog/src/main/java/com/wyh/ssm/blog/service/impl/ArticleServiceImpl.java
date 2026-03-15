@@ -1,92 +1,71 @@
 package com.wyh.ssm.blog.service.impl;
 
+import cn.hutool.http.HtmlUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.wyh.ssm.blog.dto.response.PageResult;
+import com.wyh.ssm.blog.entity.Article;
+import com.wyh.ssm.blog.entity.ArticleCategoryRef;
+import com.wyh.ssm.blog.entity.ArticleTagRef;
+import com.wyh.ssm.blog.entity.Category;
+import com.wyh.ssm.blog.entity.Tag;
 import com.wyh.ssm.blog.enums.ArticleCommentStatus;
-import com.wyh.ssm.blog.service.ArticleService;
-import com.wyh.ssm.blog.entity.*;
+import com.wyh.ssm.blog.exception.ResourceNotFoundException;
+import com.wyh.ssm.blog.exception.ValidationException;
 import com.wyh.ssm.blog.mapper.ArticleCategoryRefMapper;
 import com.wyh.ssm.blog.mapper.ArticleMapper;
 import com.wyh.ssm.blog.mapper.ArticleTagRefMapper;
+import com.wyh.ssm.blog.service.ArticleService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- * 文章Servie实现
+ * 文章服务实现
  */
-@Service
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
 
-    @Autowired
-    private ArticleMapper articleMapper;
+    private final ArticleMapper articleMapper;
+    private final ArticleCategoryRefMapper articleCategoryRefMapper;
+    private final ArticleTagRefMapper articleTagRefMapper;
 
-    @Autowired
-    private ArticleCategoryRefMapper articleCategoryRefMapper;
-
-    @Autowired
-    private ArticleTagRefMapper articleTagRefMapper;
+    private static final int SUMMARY_LENGTH = 150;
 
     @Override
     public Integer countArticle(Integer status) {
-        Integer count = 0;
-        try {
-            count = articleMapper.countArticle(status);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("根据状态统计文章数, status:{}, cause:{}", status, e);
-        }
-        return count;
+        return articleMapper.countArticle(status);
     }
 
     @Override
     public Integer countArticleComment() {
-        Integer count = 0;
-        try {
-            count = articleMapper.countArticleComment();
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("统计文章评论数失败, cause:{}", e);
-        }
-        return count;
+        return articleMapper.countArticleComment();
     }
-
 
     @Override
     public Integer countArticleView() {
-        Integer count = 0;
-        try {
-            count = articleMapper.countArticleView();
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("统计文章访问量失败, cause:{}", e);
-        }
-        return count;
+        return articleMapper.countArticleView();
     }
 
     @Override
     public Integer countArticleByCategoryId(Integer categoryId) {
-        Integer count = 0;
-        try {
-            count = articleCategoryRefMapper.countArticleByCategoryId(categoryId);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("根据分类统计文章数量失败, categoryId:{}, cause:{}", categoryId, e);
-        }
-        return count;
+        return articleCategoryRefMapper.countArticleByCategoryId(categoryId);
     }
 
     @Override
     public Integer countArticleByTagId(Integer tagId) {
         return articleTagRefMapper.countArticleByTagId(tagId);
-
     }
 
     @Override
@@ -96,77 +75,123 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<Article> listRecentArticle(Integer limit) {
+        if (limit == null || limit <= 0) {
+            limit = 10;
+        }
         return articleMapper.listArticleByLimit(limit);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateArticleDetail(Article article) {
+        validateArticle(article);
         article.setArticleUpdateTime(new Date());
         articleMapper.update(article);
 
+        // 更新标签关联
         if (article.getTagList() != null) {
-            //删除标签和文章关联
             articleTagRefMapper.deleteByArticleId(article.getArticleId());
-            //添加标签和文章关联
-            for (int i = 0; i < article.getTagList().size(); i++) {
-                ArticleTagRef articleTagRef = new ArticleTagRef(article.getArticleId(), article.getTagList().get(i).getTagId());
-                articleTagRefMapper.insert(articleTagRef);
+            for (Tag tag : article.getTagList()) {
+                if (tag.getTagId() != null) {
+                    ArticleTagRef ref = new ArticleTagRef(article.getArticleId(), tag.getTagId());
+                    articleTagRefMapper.insert(ref);
+                }
             }
         }
 
+        // 更新分类关联
         if (article.getCategoryList() != null) {
-            //添加分类和文章关联
             articleCategoryRefMapper.deleteByArticleId(article.getArticleId());
-            //删除分类和文章关联
-            for (int i = 0; i < article.getCategoryList().size(); i++) {
-                ArticleCategoryRef articleCategoryRef = new ArticleCategoryRef(article.getArticleId(), article.getCategoryList().get(i).getCategoryId());
-                articleCategoryRefMapper.insert(articleCategoryRef);
+            for (Category category : article.getCategoryList()) {
+                if (category.getCategoryId() != null) {
+                    ArticleCategoryRef ref = new ArticleCategoryRef(article.getArticleId(), category.getCategoryId());
+                    articleCategoryRefMapper.insert(ref);
+                }
             }
         }
+
+        log.info("文章已更新，articleId: {}", article.getArticleId());
     }
 
     @Override
     public void updateArticle(Article article) {
+        if (article.getArticleId() == null) {
+            throw new ValidationException("文章 ID 不能为空");
+        }
         articleMapper.update(article);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteArticleBatch(List<Integer> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new ValidationException("文章 ID 列表不能为空");
+        }
         articleMapper.deleteBatch(ids);
+        log.info("批量删除文章，ids: {}", ids);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteArticle(Integer id) {
+        if (id == null) {
+            throw new ValidationException("文章 ID 不能为空");
+        }
+        Article article = getArticleByStatusAndId(null, id);
+        if (article == null) {
+            throw new ResourceNotFoundException("文章", id.longValue());
+        }
+
         articleMapper.deleteById(id);
-        // 删除分类关联
         articleCategoryRefMapper.deleteByArticleId(id);
+        articleTagRefMapper.deleteByArticleId(id);
+        log.info("文章已删除，articleId: {}", id);
     }
 
-
     @Override
-    public PageInfo<Article> pageArticle(Integer pageIndex,
-                                         Integer pageSize,
-                                         HashMap<String, Object> criteria) {
+    public PageResult<Article> pageArticle(Integer pageIndex, Integer pageSize, HashMap<String, Object> criteria) {
+        if (pageIndex == null || pageIndex < 1) {
+            pageIndex = 1;
+        }
+        if (pageSize == null || pageSize < 1) {
+            pageSize = 10;
+        }
+
         PageHelper.startPage(pageIndex, pageSize);
         List<Article> articleList = articleMapper.findAll(criteria);
-        for (int i = 0; i < articleList.size(); i++) {
-            //封装CategoryList
-            List<Category> categoryList = articleCategoryRefMapper.listCategoryByArticleId(articleList.get(i).getArticleId());
-            if (categoryList == null || categoryList.size() == 0) {
+
+        // 填充分类信息
+        for (Article article : articleList) {
+            List<Category> categoryList = articleCategoryRefMapper.listCategoryByArticleId(article.getArticleId());
+            if (categoryList == null || categoryList.isEmpty()) {
                 categoryList = new ArrayList<>();
                 categoryList.add(Category.Default());
             }
-            articleList.get(i).setCategoryList(categoryList);
-//            //封装TagList
-//            List<Tag> tagList = articleTagRefMapper.listTagByArticleId(articleList.get(i).getArticleId());
-//            articleList.get(i).setTagList(tagList);
+            article.setCategoryList(categoryList);
         }
-        return new PageInfo<>(articleList);
+
+        PageInfo<Article> pageInfo = new PageInfo<>(articleList);
+
+        // 计算是否有上一页和下一页
+        boolean hasPrevious = pageInfo.getPageNum() > 1;
+        boolean hasNext = pageInfo.getPageNum() < pageInfo.getPages();
+
+        return PageResult.<Article>builder()
+                .pageNum(pageInfo.getPageNum())
+                .pageSize(pageInfo.getPageSize())
+                .total(pageInfo.getTotal())
+                .pages(pageInfo.getPages())
+                .list(pageInfo.getList())
+                .hasPrevious(hasPrevious)
+                .hasNext(hasNext)
+                .build();
     }
 
     @Override
     public Article getArticleByStatusAndId(Integer status, Integer id) {
+        if (id == null) {
+            throw new ValidationException("文章 ID 不能为空");
+        }
         Article article = articleMapper.getArticleByStatusAndId(status, id);
         if (article != null) {
             List<Category> categoryList = articleCategoryRefMapper.listCategoryByArticleId(article.getArticleId());
@@ -177,9 +202,11 @@ public class ArticleServiceImpl implements ArticleService {
         return article;
     }
 
-
     @Override
     public List<Article> listArticleByViewCount(Integer limit) {
+        if (limit == null || limit <= 0) {
+            limit = 10;
+        }
         return articleMapper.listArticleByViewCount(limit);
     }
 
@@ -195,39 +222,65 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<Article> listRandomArticle(Integer limit) {
+        if (limit == null || limit <= 0) {
+            limit = 10;
+        }
         return articleMapper.listRandomArticle(limit);
     }
 
     @Override
     public List<Article> listArticleByCommentCount(Integer limit) {
+        if (limit == null || limit <= 0) {
+            limit = 10;
+        }
         return articleMapper.listArticleByCommentCount(limit);
     }
 
-
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void insertArticle(Article article) {
-        //添加文章
+    public Article insertArticle(Article article) {
+        validateArticle(article);
+
+        // 生成摘要
+        if (!StringUtils.hasText(article.getArticleSummary()) && StringUtils.hasText(article.getArticleContent())) {
+            String summaryText = HtmlUtil.cleanHtmlTag(article.getArticleContent());
+            article.setArticleSummary(summaryText.length() > SUMMARY_LENGTH
+                    ? summaryText.substring(0, SUMMARY_LENGTH)
+                    : summaryText);
+        }
+
         article.setArticleCreateTime(new Date());
         article.setArticleUpdateTime(new Date());
         article.setArticleIsComment(ArticleCommentStatus.ALLOW.getValue());
         article.setArticleViewCount(0);
         article.setArticleLikeCount(0);
-        article.setArticleCommentCount(0);
-        article.setArticleOrder(1);
-        articleMapper.insert(article);
-        //添加分类和文章关联
-        for (int i = 0; i < article.getCategoryList().size(); i++) {
-            ArticleCategoryRef articleCategoryRef = new ArticleCategoryRef(article.getArticleId(), article.getCategoryList().get(i).getCategoryId());
-            articleCategoryRefMapper.insert(articleCategoryRef);
-        }
-        //添加标签和文章关联
-        for (int i = 0; i < article.getTagList().size(); i++) {
-            ArticleTagRef articleTagRef = new ArticleTagRef(article.getArticleId(), article.getTagList().get(i).getTagId());
-            articleTagRefMapper.insert(articleTagRef);
-        }
-    }
+        article.setArticleOrder(article.getArticleOrder() != null ? article.getArticleOrder() : 1);
 
+        articleMapper.insert(article);
+
+        // 添加分类关联
+        if (article.getCategoryList() != null) {
+            for (Category category : article.getCategoryList()) {
+                if (category.getCategoryId() != null) {
+                    ArticleCategoryRef ref = new ArticleCategoryRef(article.getArticleId(), category.getCategoryId());
+                    articleCategoryRefMapper.insert(ref);
+                }
+            }
+        }
+
+        // 添加标签关联
+        if (article.getTagList() != null) {
+            for (Tag tag : article.getTagList()) {
+                if (tag.getTagId() != null) {
+                    ArticleTagRef ref = new ArticleTagRef(article.getArticleId(), tag.getTagId());
+                    articleTagRefMapper.insert(ref);
+                }
+            }
+        }
+
+        log.info("文章已创建，articleId: {}", article.getArticleId());
+        return article;
+    }
 
     @Override
     public void updateCommentCount(Integer articleId) {
@@ -246,8 +299,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<Article> listArticleByCategoryIds(List<Integer> cateIds, Integer limit) {
-        if (cateIds == null || cateIds.size() == 0) {
-            return null;
+        if (cateIds == null || cateIds.isEmpty()) {
+            return new ArrayList<>();
         }
         return articleMapper.findArticleByCategoryIds(cateIds, limit);
     }
@@ -262,5 +315,21 @@ public class ArticleServiceImpl implements ArticleService {
         return articleMapper.listAllNotWithContent();
     }
 
-
+    /**
+     * 验证文章数据
+     */
+    private void validateArticle(Article article) {
+        if (article == null) {
+            throw new ValidationException("文章信息不能为空");
+        }
+        if (!StringUtils.hasText(article.getArticleTitle())) {
+            throw new ValidationException("文章标题不能为空");
+        }
+        if (article.getArticleTitle().length() > 200) {
+            throw new ValidationException("文章标题长度不能超过 200 个字符");
+        }
+        if (!StringUtils.hasText(article.getArticleContent())) {
+            throw new ValidationException("文章内容不能为空");
+        }
+    }
 }

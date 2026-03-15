@@ -1,6 +1,6 @@
 package com.wyh.ssm.blog.controller.home;
 
-import com.github.pagehelper.PageInfo;
+import com.wyh.ssm.blog.dto.response.PageResult;
 import com.wyh.ssm.blog.entity.Link;
 
 import com.wyh.ssm.blog.enums.ArticleStatus;
@@ -43,7 +43,7 @@ public class IndexController {
         HashMap<String, Object> criteria = new HashMap<>(1);
         criteria.put("status", ArticleStatus.PUBLISH.getValue());
         //文章列表
-        PageInfo<Article> articleList = articleService.pageArticle(pageIndex, pageSize, criteria);
+        PageResult<Article> articleList = articleService.pageArticle(pageIndex, pageSize, criteria);
         model.addAttribute("pageInfo", articleList);
 
         //公告
@@ -82,7 +82,7 @@ public class IndexController {
         HashMap<String, Object> criteria = new HashMap<>(2);
         criteria.put("status", ArticleStatus.PUBLISH.getValue());
         criteria.put("keywords", keywords);
-        PageInfo<Article> articlePageInfo = articleService.pageArticle(pageIndex, pageSize, criteria);
+        PageResult<Article> articlePageInfo = articleService.pageArticle(pageIndex, pageSize, criteria);
         model.addAttribute("pageInfo", articlePageInfo);
 
         //侧边栏显示

@@ -1,6 +1,7 @@
 package com.wyh.ssm.blog.service;
 
 import com.github.pagehelper.PageInfo;
+import com.wyh.ssm.blog.dto.response.PageResult;
 import com.wyh.ssm.blog.entity.Article;
 
 import java.util.HashMap;
@@ -104,7 +105,7 @@ public interface ArticleService {
      * @param criteria  查询条件
      * @return 文章列表
      */
-    PageInfo<Article> pageArticle(Integer pageIndex,
+    PageResult<Article> pageArticle(Integer pageIndex,
                                   Integer pageSize,
                                   HashMap<String, Object> criteria);
 
@@ -161,8 +162,9 @@ public interface ArticleService {
      * 添加文章
      *
      * @param article 文章
+     * @return 创建后的文章
      */
-    void insertArticle(Article article);
+    Article insertArticle(Article article);
 
 
     /**
