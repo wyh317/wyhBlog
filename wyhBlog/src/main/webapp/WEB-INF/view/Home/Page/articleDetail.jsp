@@ -30,7 +30,7 @@
             <c:when test="${article.categoryList != null && article.categoryList.size() > 0}">
                 <c:forEach items="${article.categoryList}" var="c">
                     <i class="fa fa-angle-right"></i>
-                    <a href="/category/${c.categoryId}">
+                    <a href="${ctx}/category/${c.categoryId}">
                             ${c.categoryName}
                     </a>
                 </c:forEach>
@@ -104,7 +104,7 @@
                                 </li>
                             </c:if>
                             <li class="comment">
-                                <a href="/article/${article.articleId}#comments"
+                                <a href="${ctx}/article/${article.articleId}#comments"
                                    rel="external nofollow">
                                     <i class="fa fa-comment-o"></i>
                                     <i class="comment-count">${commentList.size()}</i>
@@ -128,7 +128,7 @@
                         <div class="single-cat-tag">
                             <div class="single-cat">所属分类：
                                 <c:forEach items="${article.categoryList}" var="c">
-                                    <a href="/category/${c.categoryId}">
+                                    <a href="${ctx}/category/${c.categoryId}">
                                             ${c.categoryName}
                                     </a>
                                 </c:forEach>
@@ -146,7 +146,7 @@
                 <ul class="" data-wow-delay="0.3s">
                     <c:forEach items="${article.tagList}" var="t">
                         <li>
-                            <a href="/tag/${t.tagId}" rel="tag"
+                            <a href="${ctx}/tag/${t.tagId}" rel="tag"
                                style="background:#666666">
                                     ${t.tagName}
                             </a>
@@ -170,7 +170,7 @@
                             <ul>
                                 <c:forEach items="${similarArticleList}" var="s">
                                     <li>
-                                        <a href="/article/${s.articleId}">${s.articleTitle}</a>
+                                        <a href="${ctx}/article/${s.articleId}">${s.articleTitle}</a>
                                     </li>
                                 </c:forEach>
                             </ul>
@@ -184,7 +184,7 @@
                             <ul>
                                 <c:forEach items="${mostViewArticleList}" var="m">
                                     <li>
-                                        <a href="/article/${m.articleId}">
+                                        <a href="${ctx}/article/${m.articleId}">
                                                 ${m.articleTitle}
                                         </a>
                                     </li>
@@ -203,7 +203,7 @@
             <nav class="nav-single">
                 <c:choose>
                     <c:when test="${preArticle!=null}">
-                        <a href="/article/${preArticle.articleId}" rel="next">
+                        <a href="${ctx}/article/${preArticle.articleId}" rel="next">
                             <span class="meta-nav">
                                 <span class="post-nav">上一篇
                                  <i class="fa fa-angle-left"></i>
@@ -222,7 +222,7 @@
                 </c:choose>
                 <c:choose>
                     <c:when test="${afterArticle!=null}">
-                        <a href="/article/${afterArticle.articleId}" rel="next">
+                        <a href="${ctx}/article/${afterArticle.articleId}" rel="next">
                             <span class="meta-nav">
                                 <span class="post-nav">下一篇
                                  <i class="fa fa-angle-right"></i>
@@ -250,7 +250,7 @@
                 <div id="respond" class="comment-respond">
                     <h3 id="reply-title" class="comment-reply-title"><span id="reply-title-word">发表评论</span>
                         <a rel="nofollow" id="cancel-comment-reply-link"
-                           href="/article/${article.articleId}#respond"
+                           href="${ctx}/article/${article.articleId}#respond"
                            style="">取消回复</a>
                     </h3>
                     <form id="comment_form" method="post">

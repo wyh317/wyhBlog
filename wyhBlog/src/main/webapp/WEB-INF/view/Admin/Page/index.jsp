@@ -15,7 +15,7 @@
 <rapid:override name="content">
     <blockquote class="layui-elem-quote">
         <span class="layui-breadcrumb" lay-separator="/">
-          <a href="/admin">首页</a>
+          <a href="${ctx}/admin">首页</a>
           <a><cite>页面列表</cite></a>
         </span>
     </blockquote>

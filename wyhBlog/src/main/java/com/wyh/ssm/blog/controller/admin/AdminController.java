@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.wyh.ssm.blog.util.MyUtils.getIpAddr;
+import static com.wyh.ssm.blog.util.MyUtils.strToMd5;
 
 
 @Controller
@@ -82,7 +83,7 @@ public class AdminController {
         if (user == null) {
             map.put("code", 0);
             map.put("msg", "用户名无效！");
-        } else if (!user.getUserPass().equals(password)) {
+        } else if (!user.getUserPass().equals(strToMd5(password))) {
             map.put("code", 0);
             map.put("msg", "密码错误！");
         } else {

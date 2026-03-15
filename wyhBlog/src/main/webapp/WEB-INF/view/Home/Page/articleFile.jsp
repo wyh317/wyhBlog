@@ -41,7 +41,7 @@
                         <fmt:formatDate value="${a.articleCreateTime}" pattern="yyyy年MM月dd日"/>
                     </li>
                     <li class="entry-title">
-                        <a href="/article/${a.articleId}">${a.articleTitle}</a>
+                        <a href="${ctx}/article/${a.articleId}">${a.articleTitle}</a>
                     </li>
                 </c:forEach>
             </ul>

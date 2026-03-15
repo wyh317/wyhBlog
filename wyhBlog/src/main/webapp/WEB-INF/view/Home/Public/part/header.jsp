@@ -13,10 +13,10 @@
             <div class="user-login">
                 <c:choose>
                     <c:when test="${sessionScope.user==null}">
-                        <a href="/admin">登录</a>
+                        <a href="${ctx}/admin">登录</a>
                     </c:when>
                     <c:otherwise>
-                        <a href="/admin">进入后台</a>
+                        <a href="${ctx}/admin">进入后台</a>
                     </c:otherwise>
                 </c:choose>
             </div>
@@ -70,7 +70,7 @@
                             <c:forEach items="${allCategoryList}" var="category">
                                 <c:if test="${category.categoryPid==0}">
                                     <li>
-                                        <a href="/category/${category.categoryId}">
+                                        <a href="${ctx}/category/${category.categoryId}">
                                             <i class="${category.categoryIcon}"></i>
                                             <span class="font-text">${category.categoryName}&nbsp;</span>
                                         </a>
@@ -78,7 +78,7 @@
                                             <c:forEach items="${allCategoryList}" var="cate">
                                                 <c:if test="${cate.categoryPid==category.categoryId}">
                                                     <li>
-                                                        <a href="/category/${cate.categoryId}" target="_blank">${cate.categoryName}</a>
+                                                        <a href="${ctx}/category/${cate.categoryId}" target="_blank">${cate.categoryName}</a>
                                                     </li>
                                                 </c:if>
                                             </c:forEach>

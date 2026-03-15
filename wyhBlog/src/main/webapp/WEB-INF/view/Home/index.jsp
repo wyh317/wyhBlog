@@ -14,7 +14,7 @@
                 <ul style="margin-top: 0px;">
                     <c:forEach items="${noticeList}" var="n">
                         <li class="scrolltext-title">
-                            <a href="/notice/${n.noticeId}" rel="bookmark">${n.noticeTitle}</a>
+                            <a href="${ctx}/notice/${n.noticeId}" rel="bookmark">${n.noticeTitle}</a>
                         </li>
                     </c:forEach>
                 </ul>
@@ -32,7 +32,7 @@
                 <article class="post type-post">
 
                     <figure class="thumbnail">
-                        <a href="/article/${a.articleId}">
+                        <a href="${ctx}/article/${a.articleId}">
                             <img width="280" height="210"
                                  src="/img/thumbnail/random/img_${a.articleId%15}.jpg"
                                  class="attachment-content size-content wp-post-image"
@@ -40,7 +40,7 @@
                         </a>
                         <%--在首页里，每一个文章的左上角都添加一个种类标识--%>
                         <span class="cat">
-                                <a href="/category/${a.categoryList[a.categoryList.size()-1].categoryId}">
+                                <a href="${ctx}/category/${a.categoryList[a.categoryList.size()-1].categoryId}">
                                         ${a.categoryList[a.categoryList.size()-1].categoryName}
                                 </a>
                         </span>
@@ -48,7 +48,7 @@
 
                     <header class="entry-header">
                         <h2 class="entry-title">
-                            <a href="/article/${a.articleId}"
+                            <a href="${ctx}/article/${a.articleId}"
                                rel="bookmark">
                                     ${a.articleTitle}
                             </a>
@@ -85,7 +85,7 @@
                                     ${a.articleViewCount} views
                             </span>
                             <span class="comment">&nbsp;&nbsp;
-                                <a href="/article/${a.articleId}#comments" rel="external nofollow">
+                                <a href="${ctx}/article/${a.articleId}#comments" rel="external nofollow">
                                   <i class="fa fa-comment-o"></i>
                                     <c:choose>
                                         <c:when test="${a.articleCommentCount == 0}">
@@ -103,7 +103,7 @@
                     </div><!-- .entry-content -->
 
                     <span class="entry-more">
-                        <a href="/article/${a.articleId}"
+                        <a href="${ctx}/article/${a.articleId}"
                            rel="bookmark">
                             阅读全文
                         </a>

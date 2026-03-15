@@ -26,7 +26,7 @@
 
     <blockquote class="layui-elem-quote">
         <span class="layui-breadcrumb" lay-separator="/">
-          <a href="/admin">首页</a>
+          <a href="${ctx}/admin">首页</a>
           <a><cite>公告列表</cite></a>
         </span>
     </blockquote>
@@ -54,7 +54,7 @@
 
                     <tr>
                         <td>
-                            <a href="/notice/${c.noticeId}" target="_blank">${c.noticeTitle}</a>
+                            <a href="${ctx}/notice/${c.noticeId}" target="_blank">${c.noticeTitle}</a>
                         </td>
                         <td>
                                 ${c.noticeOrder}

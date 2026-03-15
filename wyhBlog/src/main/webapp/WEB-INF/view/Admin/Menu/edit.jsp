@@ -34,7 +34,7 @@
 
     <blockquote class="layui-elem-quote">
         <span class="layui-breadcrumb" lay-separator="/">
-          <a href="/admin">首页</a>
+          <a href="${ctx}/admin">首页</a>
           <a href="/admin/menu">菜单内容列表</a>
           <a><cite>编辑菜单内容</cite></a>
         </span>

@@ -31,7 +31,7 @@
                 <ul>
                     <c:forEach items="${mostCommentArticleList}" var="m">
                         <li>
-                            <a href="/article/${m.articleId}" rel="bookmark" title=" (${m.articleCommentCount}条评论)">
+                            <a href="${ctx}/article/${m.articleId}" rel="bookmark" title=" (${m.articleCommentCount}条评论)">
                                     ${m.articleTitle}
                             </a>
                         </li>
@@ -49,7 +49,7 @@
             </h3>
             <div class="tagcloud">
                 <c:forEach items="${allTagList}" var="t">
-                    <a href="/tag/${t.tagId}"
+                    <a href="${ctx}/tag/${t.tagId}"
                        class="tag-link-129 tag-link-position-1"
                        style="font-size: 14px;">
                             ${t.tagName}
@@ -70,7 +70,7 @@
                 <ul>
                     <c:forEach items="${randomArticleList}" var="r">
                         <li>
-                            <a href="/article/${r.articleId}" rel="bookmark">
+                            <a href="${ctx}/article/${r.articleId}" rel="bookmark">
                                     ${r.articleTitle}
                             </a>
                         </li>

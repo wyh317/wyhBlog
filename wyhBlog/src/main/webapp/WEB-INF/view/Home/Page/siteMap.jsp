@@ -46,13 +46,13 @@
                         <c:forEach items="${categoryList}" var="c">
                             <c:if test="${c.categoryPid==0}">
                                 <li class="cat-item" style="padding: 5px">
-                                    <a href="/category/${c.categoryId}">丨- ${c.categoryName}</a>
+                                    <a href="${ctx}/category/${c.categoryId}">丨- ${c.categoryName}</a>
                                 </li>
                                 <ul class="children">
                                     <c:forEach items="${categoryList}" var="c2">
                                         <c:if test="${c2.categoryPid==c.categoryId}">
                                             <li class="cat-item" style="padding: 5px 30px;">
-                                                <a href="/category/${c2.categoryId}" target="_blank">${c2.categoryName}</a>
+                                                <a href="${ctx}/category/${c2.categoryId}" target="_blank">${c2.categoryName}</a>
                                             </li>
                                         </c:if>
                                     </c:forEach>
@@ -69,7 +69,7 @@
                         <ul>
                             <c:forEach items="${articleList}" var="a">
                                 <li style="padding: 5px">
-                                    <a href="/article/${a.articleId}" title="ajax实现form表单提交" target="_blank">${a.articleTitle}</a>
+                                    <a href="${ctx}/article/${a.articleId}" title="ajax实现form表单提交" target="_blank">${a.articleTitle}</a>
                                 </li>
                             </c:forEach>
 
@@ -81,7 +81,7 @@
                     <h2 class="layui-colla-title">标签库</h2>
                     <div class="layui-colla-content layui-show">
                         <c:forEach items="${tagList}" var="t">
-                            <a href="/tag/${t.tagId}" style="font-size: ${t.articleCount/4+14}px" title="${t.articleCount}个话题" target="_blank">${t.tagName}</a>
+                            <a href="${ctx}/tag/${t.tagId}" style="font-size: ${t.articleCount/4+14}px" title="${t.articleCount}个话题" target="_blank">${t.tagName}</a>
                         </c:forEach>
                     </div>
                 </div>

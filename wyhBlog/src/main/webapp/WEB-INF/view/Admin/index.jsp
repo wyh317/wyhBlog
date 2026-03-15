@@ -233,7 +233,7 @@
                                 <c:forEach items="${articleList}" begin="0" end="4" step="1" var="a">
                                     <li><span><fmt:formatDate value="${a.articleCreateTime}"
                                                               pattern="HH:mm MM月dd日"/> </span>
-                                        <a href="/article/${a.articleId}"
+                                        <a href="${ctx}/article/${a.articleId}"
                                            target="_blank">${a.articleTitle}</a>
                                     </li>
                                 </c:forEach>
@@ -255,7 +255,7 @@
                                                    rel="external nofollow"
                                                    class="url">${c.commentAuthorName}</a>
                                             </cite>发表在
-                                                《<a href="/article/${c.commentArticleId}">${c.article.articleTitle}</a>》
+                                                《<a href="${ctx}/article/${c.commentArticleId}">${c.article.articleTitle}</a>》
                                             </p>
 
                                             <blockquote><p>${c.commentContent}</p></blockquote>

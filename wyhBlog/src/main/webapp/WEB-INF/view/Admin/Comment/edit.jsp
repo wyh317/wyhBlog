@@ -25,7 +25,7 @@
 
     <blockquote class="layui-elem-quote">
         <span class="layui-breadcrumb" lay-separator="/">
-              <a href="/admin">首页</a>
+              <a href="${ctx}/admin">首页</a>
               <a href="/admin/comment">评论列表</a>
               <a><cite>编辑评论</cite></a>
         </span>

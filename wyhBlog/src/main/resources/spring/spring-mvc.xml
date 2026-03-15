@@ -48,6 +48,9 @@
     <mvc:resources mapping="/img/**" location="/resource/assets/img/"></mvc:resources>
     <mvc:resources mapping="/plugin/**" location="/resource/assets/plugin/"></mvc:resources>
 
+    <!-- 让 Spring MVC 将静态资源请求交给容器默认的 Servlet 处理 -->
+    <mvc:default-servlet-handler/>
+
 
     <mvc:interceptors>
         <mvc:interceptor>

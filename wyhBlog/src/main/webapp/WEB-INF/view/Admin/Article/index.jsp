@@ -26,7 +26,7 @@
 <rapid:override name="content">
     <blockquote class="layui-elem-quote">
         <span class="layui-breadcrumb" lay-separator="/">
-          <a href="/admin">首页</a>
+          <a href="${ctx}/admin">首页</a>
           <a><cite>文章列表</cite></a>
         </span>
     </blockquote>
@@ -57,14 +57,14 @@
                 <c:forEach items="${pageInfo.list}" var="a">
                     <tr>
                         <td>
-                            <a href="/article/${a.articleId}"
+                            <a href="${ctx}/article/${a.articleId}"
                                target="_blank">
                                     ${a.articleTitle}
 
                             </a></td>
                         <td>
                             <c:forEach items="${a.categoryList}" var="c">
-                                <a href="/category/${c.categoryId}"
+                                <a href="${ctx}/category/${c.categoryId}"
                                    target="_blank">${c.categoryName}</a>
                                 &nbsp;
                             </c:forEach>

@@ -31,7 +31,7 @@
             <ul>
                 <c:forEach items="${mostCommentArticleList}" var="m">
                     <li>
-                        <a href="/article/${m.articleId}" rel="bookmark" title=" (${m.articleCommentCount}条评论)">
+                        <a href="${ctx}/article/${m.articleId}" rel="bookmark" title=" (${m.articleCommentCount}条评论)">
                                 ${m.articleTitle}
                         </a>
                     </li>

@@ -21,7 +21,7 @@
 
     <blockquote class="layui-elem-quote">
         <span class="layui-breadcrumb" lay-separator="/">
-              <a href="/admin">首页</a>
+              <a href="${ctx}/admin">首页</a>
               <a href="/admin/category">分类列表</a>
               <a><cite>编辑分类</cite></a>
         </span>
@@ -100,10 +100,10 @@
                     <c:if test="${c.categoryPid==0}">
                         <tr>
                             <td>
-                                <a href="/category/${c.categoryId}" target="_blank">${c.categoryName}</a>
+                                <a href="${ctx}/category/${c.categoryId}" target="_blank">${c.categoryName}</a>
                             </td>
                             <td>
-                                <a href="/category/${c.categoryId}" target="_blank">${c.articleCount}</a>
+                                <a href="${ctx}/category/${c.categoryId}" target="_blank">${c.articleCount}</a>
                             </td>
                             <td>
                                 <a href="/admin/category/edit/${c.categoryId}" class="layui-btn layui-btn-mini">编辑</a>
@@ -118,10 +118,10 @@
                             <c:if test="${c2.categoryPid==c.categoryId}">
                                 <tr>
                                     <td>
-                                        <a href="/category/${c2.categoryId}" target="_blank">——${c2.categoryName}</a>
+                                        <a href="${ctx}/category/${c2.categoryId}" target="_blank">——${c2.categoryName}</a>
                                     </td>
                                     <td>
-                                        <a href="/category/${c2.categoryId}" target="_blank">${c2.articleCount}</a>
+                                        <a href="${ctx}/category/${c2.categoryId}" target="_blank">${c2.articleCount}</a>
                                     </td>
                                     <td>
                                         <a href="/admin/category/edit/${c2.categoryId}" class="layui-btn layui-btn-mini">编辑</a>

@@ -30,7 +30,7 @@
 
     <blockquote class="layui-elem-quote">
          <span class="layui-breadcrumb" lay-separator="/">
-              <a href="/admin">首页</a>
+              <a href="${ctx}/admin">首页</a>
               <a href="/admin/user">用户列表</a>
               <c:choose>
                   <c:when test="${sessionScope.user.userId==user.userId}">

@@ -16,7 +16,8 @@
     <meta name="applicable-device" content="pc,mobile">
     <meta name="MobileOptimized" content="width"/>
     <meta name="HandheldFriendly" content="true"/>
-    <link rel="shortcut icon" href="/img/logo.png">
+    <c:set var="ctx" value="${pageContext.request.contextPath}"/>
+    <link rel="shortcut icon" href="${ctx}/img/logo.png">
     <rapid:block name="description">
         <meta name="description" content="${options.optionMetaDescrption}"/>
     </rapid:block>
@@ -28,8 +29,8 @@
                 ${options.optionSiteTitle}-${options.optionSiteDescrption}
         </title>
     </rapid:block>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/plugin/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="${ctx}/css/style.css">
+    <link rel="stylesheet" href="${ctx}/plugin/font-awesome/css/font-awesome.min.css">
 
     <rapid:block name="header-style">
 
@@ -51,11 +52,11 @@
 
 </div>
 
-<script src="/js/jquery.min.js"></script>
-<script src="/js/superfish.js"></script>
-<script src='/js/sticky.js'></script>
-<script src="/js/script.js"></script>
-<script src="/plugin/layui/layui.all.js"></script>
+<script src="${ctx}/js/jquery.min.js"></script>
+<script src="${ctx}/js/superfish.js"></script>
+<script src='${ctx}/js/sticky.js'></script>
+<script src="${ctx}/js/script.js"></script>
+<script src="${ctx}/plugin/layui/layui.all.js"></script>
 
 
 <rapid:block name="footer-script"></rapid:block>

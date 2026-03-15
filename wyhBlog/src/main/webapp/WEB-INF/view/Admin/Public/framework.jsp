@@ -9,21 +9,22 @@
 <head>
     <meta charset="utf-8">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <link rel="shortcut icon" href="/img/logo.png">
+    <c:set var="ctx" value="${pageContext.request.contextPath}"/>
+    <link rel="shortcut icon" href="${ctx}/img/logo.png">
     <title>
         ${options.optionSiteTitle}后台
             <rapid:block name="title"></rapid:block>
     </title>
-    <link rel="stylesheet" href="/plugin/layui/css/layui.css">
-    <link rel="stylesheet" href="/css/back.css">
-    <link rel="stylesheet" href="/plugin/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="${ctx}/plugin/layui/css/layui.css">
+    <link rel="stylesheet" href="${ctx}/css/back.css">
+    <link rel="stylesheet" href="${ctx}/plugin/font-awesome/css/font-awesome.min.css">
     <rapid:block name="header-style"></rapid:block>
     <rapid:block name="header-script"></rapid:block>
 </head>
 <body>
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
-        <div class="layui-logo"><a href="/admin" style="color:#009688;">
+        <div class="layui-logo"><a href="${ctx}/admin" style="color:#009688;">
         ${options.optionSiteTitle}后台
         </a>
         </div>
@@ -124,9 +125,9 @@
     </div>
 </div>
 
-<script src="/js/jquery.min.js"></script>
-<script src="/plugin/layui/layui.all.js"></script>
-<script src="/js/back.js"></script>
+<script src="${ctx}/js/jquery.min.js"></script>
+<script src="${ctx}/plugin/layui/layui.all.js"></script>
+<script src="${ctx}/js/back.js"></script>
 <rapid:block name="footer-script">
 
 </rapid:block>

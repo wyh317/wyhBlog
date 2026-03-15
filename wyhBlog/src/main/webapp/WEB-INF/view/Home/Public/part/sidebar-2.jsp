@@ -99,7 +99,7 @@
         </h3>
         <div class="tagcloud">
             <c:forEach items="${allTagList}" var="tag">
-                <a href="/tag/${tag.tagId}"
+                <a href="${ctx}/tag/${tag.tagId}"
                    class="tag-link-129 tag-link-position-1"
                    style="font-size: 14px;">
                         ${tag.tagName}
@@ -119,7 +119,7 @@
             <ul>
                 <c:forEach items="${recentCommentList}" var="r">
                 <li style="border: none;">
-                    <a href="/article/${r.commentArticleId}/#anchor-comment-${r.commentId}"  rel="external nofollow">
+                    <a href="${ctx}/article/${r.commentArticleId}/#anchor-comment-${r.commentId}"  rel="external nofollow">
                         <%--<img alt="" src="${r.commentAuthorAvatar}" class="avatar avatar-64 photo" height="64" width="64">--%>
                         <span class="comment_author">
                             <strong>${r.commentAuthorName}</strong>

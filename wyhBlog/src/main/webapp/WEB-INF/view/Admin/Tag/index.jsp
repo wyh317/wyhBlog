@@ -33,7 +33,7 @@
 
     <blockquote class="layui-elem-quote">
         <span class="layui-breadcrumb" lay-separator="/">
-              <a href="/admin">首页</a>
+              <a href="${ctx}/admin">首页</a>
               <a><cite>标签列表</cite></a>
         </span>
     </blockquote>
@@ -89,10 +89,10 @@
 
                     <tr>
                         <td>
-                            <a href="/tag/${c.tagId}" target="_blank">${c.tagName}</a>
+                            <a href="${ctx}/tag/${c.tagId}" target="_blank">${c.tagName}</a>
                         </td>
                         <td >
-                            <a href="/tag/${c.tagId}" target="_blank"  lay-data="{sort:true}">${c.articleCount}</a>
+                            <a href="${ctx}/tag/${c.tagId}" target="_blank"  lay-data="{sort:true}">${c.articleCount}</a>
                         </td>
                         <td>
                             <a href="/admin/tag/edit/${c.tagId}" class="layui-btn layui-btn-mini">编辑</a>

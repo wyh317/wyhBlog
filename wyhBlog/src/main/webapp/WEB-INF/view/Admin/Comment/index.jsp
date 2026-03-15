@@ -23,7 +23,7 @@
 <rapid:override name="content">
     <blockquote class="layui-elem-quote">
         <span class="layui-breadcrumb" lay-separator="/">
-              <a href="/admin">首页</a>
+              <a href="${ctx}/admin">首页</a>
               <a><cite>评论列表</cite></a>
         </span>
     </blockquote>
@@ -76,7 +76,7 @@
                         </div>
                     </td>
                     <td>
-                        <a href="/article/${c.article.articleId}"
+                        <a href="${ctx}/article/${c.article.articleId}"
                            target="_blank">${c.article.articleTitle}</a>
                     </td>
                     <td>
