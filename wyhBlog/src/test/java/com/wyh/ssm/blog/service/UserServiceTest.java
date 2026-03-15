@@ -1,6 +1,7 @@
 package com.wyh.ssm.blog.service;
 
 import com.wyh.ssm.blog.entity.User;
+import com.wyh.ssm.blog.mapper.ArticleMapper;
 import com.wyh.ssm.blog.mapper.UserMapper;
 import com.wyh.ssm.blog.service.impl.UserServiceImpl;
 import org.junit.Before;
@@ -25,6 +26,9 @@ public class UserServiceTest {
     
     @Mock
     private UserMapper userMapper;
+    
+    @Mock
+    private ArticleMapper articleMapper;
     
     @InjectMocks
     private UserServiceImpl userService;
@@ -102,7 +106,11 @@ public class UserServiceTest {
     @Test
     public void updateUser_WithValidUser_ShouldCallMapper() {
         // Given
-        doNothing().when(userMapper).update(testUser);
+        doAnswer(invocation -> {
+            User arg = invocation.getArgument(0);
+            arg.setUserLastLoginTime(new Date());
+            return null;
+        }).when(userMapper).update(testUser);
         
         // When
         userService.updateUser(testUser);
@@ -117,6 +125,7 @@ public class UserServiceTest {
         List<User> userList = new ArrayList<>();
         userList.add(testUser);
         when(userMapper.listUser()).thenReturn(userList);
+        when(articleMapper.countArticleByUser(1)).thenReturn(3);
         
         // When
         List<User> result = userService.listUser();
@@ -128,15 +137,28 @@ public class UserServiceTest {
     }
     
     @Test
-    public void countUser_ShouldReturnCount() {
+    public void insertUser_WithValidUser_ShouldReturnUser() {
         // Given
-        when(userMapper.countUser()).thenReturn(5L);
+        when(userMapper.insert(testUser)).thenReturn(1);
         
         // When
-        Long result = userService.countUser();
+        User result = userService.insertUser(testUser);
         
         // Then
-        assertThat(result).isEqualTo(5L);
-        verify(userMapper).countUser();
+        assertThat(result).isNotNull();
+        assertThat(result.getUserName()).isEqualTo("admin");
+        verify(userMapper).insert(testUser);
+    }
+    
+    @Test
+    public void deleteUser_WithValidId_ShouldCallMapper() {
+        // Given
+        when(userMapper.deleteById(1)).thenReturn(1);
+        
+        // When
+        userService.deleteUser(1);
+        
+        // Then
+        verify(userMapper).deleteById(1);
     }
 }
