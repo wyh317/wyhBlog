@@ -263,10 +263,9 @@
         FROM
         <include refid="tb"/>
         WHERE
-        article_status = 1 AND article_update_time=
-        (
-        SELECT max(article_update_time) FROM article
-        )
+        article_status = 1
+        ORDER BY article_update_time DESC, article_id DESC
+        LIMIT 1
     </select>
 
     <select id="countArticleByUser" parameterType="Integer" resultType="Integer">

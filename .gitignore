@@ -1,0 +1,27 @@
+# Compiled class files
+target/
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Build files
+*.class
+*.jar
+*.war
+*.ear
+
+# Log files
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
