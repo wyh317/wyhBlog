@@ -10,14 +10,82 @@
 </rapid:override>
 
 <rapid:override name="header-style">
-    <rapid:override name="header-style">
-        <link rel="stylesheet" href="/css/highlight.css">
-        <style>
-            .entry-title {
-                background: #f8f8f8;
-            }
-        </style>
-    </rapid:override>
+    <link rel="stylesheet" href="/css/highlight.css">
+    <!-- Markdown 渲染样式 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.2.0/github-markdown.min.css">
+    <style>
+        .entry-title {
+            background: #f8f8f8;
+        }
+        /* Markdown 文章样式 */
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .markdown-body img {
+            max-width: 100%;
+            height: auto;
+        }
+        .markdown-body pre {
+            background-color: #f6f8fa;
+            padding: 16px;
+            border-radius: 6px;
+            overflow: auto;
+        }
+        .markdown-body code {
+            background-color: rgba(27,31,35,0.05);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-family: "Courier New", Consolas, monospace;
+        }
+        .markdown-body pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+        .markdown-body blockquote {
+            border-left: 4px solid #dfe2e5;
+            color: #6a737d;
+            padding-left: 16px;
+            margin: 0;
+        }
+        .markdown-body table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .markdown-body table th,
+        .markdown-body table td {
+            border: 1px solid #dfe2e5;
+            padding: 8px 12px;
+        }
+        .markdown-body table tr:nth-child(2n) {
+            background-color: #f6f8fa;
+        }
+        .markdown-body h1,
+        .markdown-body h2,
+        .markdown-body h3,
+        .markdown-body h4,
+        .markdown-body h5,
+        .markdown-body h6 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        .markdown-body ul,
+        .markdown-body ol {
+            padding-left: 2em;
+        }
+        .markdown-body a {
+            color: #0366d6;
+            text-decoration: none;
+        }
+        .markdown-body a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </rapid:override>
 
 <rapid:override name="breadcrumb">
@@ -48,7 +116,7 @@
 
 
 <rapid:override name="left">
-    <%--博客主体-左侧文章正文 start--%>
+    <%--博客主体 - 左侧文章正文 start--%>
     <div id="primary" class="content-area">
         <main id="main" class="site-main" role="main">
             <article class="post" id="articleDetail" data-id="${article.articleId}">
@@ -58,8 +126,9 @@
                     </h1>
                 </header><!-- .entry-header -->
                 <div class="entry-content">
-                    <div class="single-content">
-                            ${article.articleContent}
+                    <!-- Markdown 渲染的文章内容 -->
+                    <div class="single-content markdown-body" id="articleContent">
+                        ${article.articleContent}
                     </div>
 
                     <div class="clear"></div>
@@ -82,7 +151,7 @@
                                         </span>
                                 <div id="share">
                                     <ul class="bdsharebuttonbox bdshare-button-style1-16" data-bd-bind="1503997585792">
-                                        <li><a title="分享到QQ空间" class="fa fa-qq" data-cmd="qzone" onclick="return false;"
+                                        <li><a title="分享到 QQ 空间" class="fa fa-qq" data-cmd="qzone" onclick="return false;"
                                                href="#"></a></li>
                                         <li><a title="分享到新浪微博" class="fa fa-weibo" data-cmd="tsina"
                                                onclick="return false;" href="#"></a></li>
@@ -134,7 +203,7 @@
                                 </c:forEach>
                             </div>
                         </div>
-                    </footer><!-- .entry-footer -->
+                    </footer><!-- .entry-header -->
 
 
                     <div class="clear"></div>
@@ -337,7 +406,7 @@
                                                         </a>
                                                     </span>
                                                     <fmt:formatDate value="${c.commentCreateTime}"
-                                                                    pattern="yyyy年MM月dd日 HH:mm:ss"/>&nbsp;
+                                                                    pattern="yyyy 年 MM 月 dd 日 HH:mm:ss"/>&nbsp;
                                                     <c:if test="${sessionScope.user != null}">
                                                         <a href="javascript:void(0)"
                                                            onclick="deleteComment(${c.commentId})">删除</a>
@@ -386,7 +455,7 @@
                                                             </a>
                                                         </span>
                                                         <fmt:formatDate value="${c2.commentCreateTime}"
-                                                                        pattern="yyyy年MM月dd日 HH:mm:ss"/>&nbsp;
+                                                                        pattern="yyyy 年 MM 月 dd 日 HH:mm:ss"/>&nbsp;
                                                         <c:if test="${sessionScope.user != null}">
                                                             <a href="javascript:void(0)"
                                                                onclick="deleteComment(${c2.commentId})">删除</a>
@@ -422,7 +491,7 @@
         </main>
         <!-- .site-main -->
     </div>
-    <%--博客主体-左侧文章正文end--%>
+    <%--博客主体 - 左侧文章正文 end--%>
 </rapid:override>
 
 
@@ -434,6 +503,8 @@
 
 <rapid:override name="footer-script">
     <script src="/js/jquery.cookie.js"></script>
+    <!-- marked.js - Markdown 渲染库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <script type="text/javascript">
 
@@ -450,15 +521,30 @@
                 var url = localStorage.getItem("url");
                 $("#author_url").val(url == 'undefined' ? '' : url);
             }
+            
+            // 渲染 Markdown 内容
+            renderMarkdownContent();
         });
+
+        // 渲染 Markdown 内容
+        function renderMarkdownContent() {
+            var contentDiv = document.getElementById('articleContent');
+            if (contentDiv) {
+                var rawContent = contentDiv.innerHTML;
+                // 使用 marked.js 渲染 Markdown
+                var renderedContent = marked.parse(rawContent);
+                contentDiv.innerHTML = renderedContent;
+                
+                // 重新初始化代码高亮
+                layui.code({
+                    elem: 'pre',
+                    about: false
+                });
+            }
+        }
 
         var articleId = $("#articleDetail").attr("data-id");
         increaseViewCount(articleId);
-        layui.code({
-            elem: 'pre',//默认值为.layui-code
-            // skin: 'notepad', //如果要默认风格，不用设定该key。
-            about: false
-        });
 
     </script>
 
