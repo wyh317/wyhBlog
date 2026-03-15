@@ -6,8 +6,10 @@ import com.wyh.ssm.blog.entity.User;
 import com.wyh.ssm.blog.service.ArticleService;
 import com.wyh.ssm.blog.service.CommentService;
 import com.wyh.ssm.blog.service.UserService;
+import com.wyh.ssm.blog.util.MyUtils;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,29 +27,25 @@ import java.util.Map;
 
 import static com.wyh.ssm.blog.util.MyUtils.getIpAddr;
 
-
+/**
+ * 后台管理 Controller（JSP 页面兼容）
+ */
+@Slf4j
 @Controller
+@RequiredArgsConstructor
 public class AdminController {
-    @Autowired
-    private UserService userService;
 
-    @Autowired
-    private ArticleService articleService;
-
-    @Autowired
-    private CommentService commentService;
+    private final UserService userService;
+    private final ArticleService articleService;
+    private final CommentService commentService;
 
     /**
      * 后台首页
-     *
-     * @return
      */
     @RequestMapping("/admin")
     public String index(Model model) {
-        //文章列表
         List<Article> articleList = articleService.listRecentArticle(5);
         model.addAttribute("articleList", articleList);
-        //评论列表
         List<Comment> commentList = commentService.listRecentComment(5);
         model.addAttribute("commentList", commentList);
         return "Admin/index";
@@ -55,8 +53,6 @@ public class AdminController {
 
     /**
      * 登录页面显示
-     *
-     * @return
      */
     @RequestMapping("/login")
     public String loginPage() {
@@ -64,65 +60,66 @@ public class AdminController {
     }
 
     /**
-     * 登录验证
-     *
-     * @param request
-     * @param response
-     * @return
+     * 登录验证（修复 MD5 密码验证问题）
      */
     @RequestMapping(value = "/loginVerify", method = RequestMethod.POST, produces = {"text/plain;charset=UTF-8"})
     @ResponseBody
     public String loginVerify(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>(4);
 
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String rememberme = request.getParameter("rememberme");
+
         User user = userService.getUserByNameOrEmail(username);
         if (user == null) {
             map.put("code", 0);
             map.put("msg", "用户名无效！");
-        } else if (!user.getUserPass().equals(password)) {
-            map.put("code", 0);
-            map.put("msg", "密码错误！");
         } else {
-            //登录成功
-            map.put("code", 1);
-            map.put("msg", "");
-            //添加session
-            request.getSession().setAttribute("user", user);
-            //添加cookie
-            if (rememberme != null) {
-                //创建两个Cookie对象
-                Cookie nameCookie = new Cookie("username", username);
-                //设置Cookie的有效期为3天
-                nameCookie.setMaxAge(60 * 60 * 24 * 3);
-                Cookie pwdCookie = new Cookie("password", password);
-                pwdCookie.setMaxAge(60 * 60 * 24 * 3);
-                response.addCookie(nameCookie);
-                response.addCookie(pwdCookie);
-            }
-            user.setUserLastLoginTime(new Date());
-            user.setUserLastLoginIp(getIpAddr(request));
-            userService.updateUser(user);
+            // 修复：对输入的密码进行 MD5 加密后再比较
+            String md5Password = MyUtils.strToMd5(password);
+            if (!user.getUserPass().equals(md5Password)) {
+                map.put("code", 0);
+                map.put("msg", "密码错误！");
+            } else {
+                // 登录成功
+                map.put("code", 1);
+                map.put("msg", "");
 
+                // 添加 session
+                HttpSession session = request.getSession();
+                session.setAttribute("user", user);
+
+                // 添加 cookie（记住我功能）
+                if (rememberme != null) {
+                    Cookie nameCookie = new Cookie("username", username);
+                    nameCookie.setMaxAge(60 * 60 * 24 * 3);
+                    Cookie pwdCookie = new Cookie("password", md5Password);
+                    pwdCookie.setMaxAge(60 * 60 * 24 * 3);
+                    response.addCookie(nameCookie);
+                    response.addCookie(pwdCookie);
+                }
+
+                // 更新登录信息
+                user.setUserLastLoginTime(new Date());
+                user.setUserLastLoginIp(getIpAddr(request));
+                userService.updateUser(user);
+
+                log.info("用户登录成功，username: {}", user.getUserName());
+            }
         }
-        String result = new JSONObject(map).toString();
-        return result;
+
+        return new JSONObject(map).toString();
     }
 
     /**
      * 退出登录
-     *
-     * @param session
-     * @return
      */
     @RequestMapping(value = "/admin/logout")
     public String logout(HttpSession session) {
         session.removeAttribute("user");
         session.invalidate();
+        log.info("用户退出登录");
         return "redirect:/login";
     }
-
-
 }

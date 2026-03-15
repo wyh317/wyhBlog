@@ -1,7 +1,7 @@
 package com.wyh.ssm.blog.controller.home;
 
 
-import com.github.pagehelper.PageInfo;
+import com.wyh.ssm.blog.dto.response.PageResult;
 
 import com.wyh.ssm.blog.enums.ArticleStatus;
 
@@ -57,7 +57,7 @@ public class CategoryController {
         HashMap<String, Object> criteria = new HashMap<>(2);
         criteria.put("categoryId", cateId);
         criteria.put("status", ArticleStatus.PUBLISH.getValue());
-        PageInfo<Article> articlePageInfo = articleService.pageArticle(pageIndex, pageSize, criteria);
+        PageResult<Article> articlePageInfo = articleService.pageArticle(pageIndex, pageSize, criteria);
         model.addAttribute("pageInfo", articlePageInfo);
 
         //侧边栏
